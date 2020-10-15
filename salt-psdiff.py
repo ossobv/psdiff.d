@@ -1,4 +1,4 @@
-# salt-minion: Don't include any children of children of salt-minion.
+# salt-minion: Don't include any children of children of salt-minion
 # This way we can psdiff (write) through the salt master.
 # (Drawback is that we don't see runaway salt-minion children.)
 

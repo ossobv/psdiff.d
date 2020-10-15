@@ -1,4 +1,4 @@
-# haproxy: Remove -x/-sf arguments which may fluctuate.
+# haproxy: Remove -x/-sf arguments which may fluctuate
 
 class ProcessFormatterMixin(object):
     def adjust(self, process):

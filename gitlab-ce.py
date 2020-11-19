@@ -7,6 +7,11 @@ ADJUST_REGEXES = (
 )
 ADJUST_CREGEXES = tuple(re.compile(i) for i in ADJUST_REGEXES)
 
+NOCHILDREN_MATCHES = (
+    '/opt/gitlab/embedded/bin/postgres -D /var/opt/gitlab/postgresql/data',
+    '/bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper',
+)
+
 EXCLUDE_REGEXES = (
     '^/opt/gitlab/embedded/bin/git --git-dir [^ ]+ cat-file --batch(-check)?$',
 )
@@ -28,8 +33,7 @@ class ProcessFormatterMixin(object):
         if not ret:
             return False
 
-        if process.has_parent(include_self=False, cmdline__startswith=(
-                '/opt/gitlab/embedded/bin/postgres -D /var/opt/gitlab/postgresql/data')):
+        if process.has_parent(include_self=False, cmdline__startswith=NOCHILDREN_MATCHES):
             return False
 
         for idx, regex in enumerate(EXCLUDE_CREGEXES):

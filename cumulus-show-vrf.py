@@ -41,3 +41,12 @@ else:
                         else:
                             process.cmdline = '{}@{} {}'.format(
                                 name, vrf, rest)
+
+        def include(self, process):
+            # We want to monitor these daemons, but not their
+            # (grand)children, as they come and go:
+            if process.has_parent(include_self=False, cmdline__startswith=(
+                    'sshd:@', '/usr/sbin/sshd@')):
+                return False
+
+            return super(ProcessFormatterMixin, self).include(process)

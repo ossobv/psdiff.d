@@ -9,4 +9,8 @@ class ProcessFormatterMixin(object):
                 '/usr/bin/dockerd ')):
             return False
 
+        if ret and process.has_parent(cmdline__startswith=(
+                '/usr/bin/containerd-shim-runc-v2 ',), include_self=True):
+            return False
+
         return ret

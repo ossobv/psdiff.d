@@ -10,7 +10,7 @@ class ProcessFormatterMixin(object):
         return self.grandparent(process.parent)
 
     def include(self, process):
-        if self.grandparent(process) != 1:
+        if self.grandparent(process) not in (0, 1):  # 0 is _our_ ROOT
             return False
 
         return super(ProcessFormatterMixin, self).include(process)

@@ -7,18 +7,27 @@ class ProcessFormatterMixin(object):
         # /usr/sbin/haproxy ... [-x ...sock] [-sf 12345 4444]
         if process.cmdline.startswith('/usr/sbin/haproxy '):
             p = process.cmdline.split()
-            if len(p) > 2 and p[-2] == '-x' and p[-1].endswith('.sock'):
-                process.cmdline = ' '.join(p[0:-2])
-                p = process.cmdline.split()
+            idx = 0
+            new_p = []
+            arg1 = None
 
             try:
-                idx = p.index('-sf')
-            except ValueError:
-                pass
-            else:
-                idx += 1
-                while len(p) > idx and p[idx].isdigit():
-                    p.pop(idx)
-                p.pop(idx - 1)
-                process.cmdline = ' '.join(p)
-                p = process.cmdline.split()
+                while idx < len(p):
+                    arg1 = p[idx]
+                    # [-x ...sock]
+                    if arg1 == '-x' and p[idx + 1].endswith('.sock'):
+                        idx += 2
+                    # [-sf PID1 PID2 PID3...]
+                    elif arg1 == '-sf':
+                        arg1 = None
+                        idx += 1
+                        while p[idx].isdigit():
+                            idx += 1
+                    else:
+                        new_p.append(arg1)
+                        idx += 1
+            except IndexError:
+                if arg1 is not None:
+                    new_p.append(arg1)
+
+            process.cmdline = ' '.join(new_p)

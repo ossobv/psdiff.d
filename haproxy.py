@@ -1,6 +1,13 @@
 # haproxy: Remove -x/-sf arguments which may fluctuate
 
 class ProcessFormatterMixin(object):
+    def include(self, process):
+        # Ignore one or more haproxy children.
+        if process.has_parent(cmdline__startswith='/usr/sbin/haproxy '):
+            return False
+
+        return super(ProcessFormatterMixin, self).include(process)
+
     def adjust(self, process):
         super(ProcessFormatterMixin, self).adjust(process)
 

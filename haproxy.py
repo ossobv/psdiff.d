@@ -41,3 +41,13 @@ class ProcessFormatterMixin(object):
                     new_p.append(arg1)
 
             process.cmdline = ' '.join(new_p)
+
+            # Check and update listening addresses.
+            listens = getattr(process, '_listens', [])
+            if listens:
+                # We aggregate udp:0.0.0.0:* for haproxy.
+                # Looks like these are made by this statement:
+                # > log 10.20.30.40:514 format rfc5424 local0 notice
+                process._listens = list(sorted(set(
+                    ('udp:0.0.0.0:*' if lst.startswith('udp:0.0.0.0:') else lst)
+                    for lst in listens)))

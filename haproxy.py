@@ -6,6 +6,8 @@ class ProcessFormatterMixin(object):
         # listening to anything.
         if process.has_parent(cmdline__startswith='/usr/sbin/haproxy '):
             listens = getattr(process, '_listens', [])
+            # BEWARE: This hackery causes non-root psdiff listings to look
+            # differently!
             if not listens:
                 return False
 
